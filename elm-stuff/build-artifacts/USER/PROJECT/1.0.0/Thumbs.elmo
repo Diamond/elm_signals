@@ -1,0 +1,130 @@
+Elm.Thumbs = Elm.Thumbs || {};
+Elm.Thumbs.make = function (_elm) {
+   "use strict";
+   _elm.Thumbs = _elm.Thumbs || {};
+   if (_elm.Thumbs.values)
+   return _elm.Thumbs.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Thumbs",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var comments = Elm.Native.Port.make(_elm).inboundSignal("comments",
+   "String",
+   function (v) {
+      return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",
+      v);
+   });
+   var commentList = function (comments) {
+      return function () {
+         var commentItem = function (comment) {
+            return A2($Html.li,
+            _L.fromArray([]),
+            _L.fromArray([$Html.text(comment)]));
+         };
+         var commentItems = A2($List.map,
+         commentItem,
+         comments);
+         return A2($Html.ul,
+         _L.fromArray([]),
+         commentItems);
+      }();
+   };
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "AddComment":
+            return _U.replace([["comments"
+                               ,A2($List._op["::"],
+                               action._0,
+                               model.comments)]],
+              model);
+            case "Down":
+            return _U.replace([["downs"
+                               ,model.downs + 1]],
+              model);
+            case "NoOp": return model;
+            case "Up":
+            return _U.replace([["ups"
+                               ,model.ups + 1]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 30 and 38");
+      }();
+   });
+   var AddComment = function (a) {
+      return {ctor: "AddComment"
+             ,_0: a};
+   };
+   var Down = {ctor: "Down"};
+   var Up = {ctor: "Up"};
+   var view = F2(function (address,
+   model) {
+      return A2($Html.div,
+      _L.fromArray([]),
+      _L.fromArray([A2($Html.button,
+                   _L.fromArray([A2($Html$Events.onClick,
+                   address,
+                   Down)]),
+                   _L.fromArray([$Html.text(A2($Basics._op["++"],
+                   $Basics.toString(model.downs),
+                   " Thumbs Down"))]))
+                   ,A2($Html.button,
+                   _L.fromArray([A2($Html$Events.onClick,
+                   address,
+                   Up)]),
+                   _L.fromArray([$Html.text(A2($Basics._op["++"],
+                   $Basics.toString(model.ups),
+                   " Thumbs Up"))]))
+                   ,commentList(model.comments)]));
+   });
+   var NoOp = {ctor: "NoOp"};
+   var inbox = $Signal.mailbox(NoOp);
+   var actions = A2($Signal.merge,
+   inbox.signal,
+   A2($Signal.map,
+   AddComment,
+   comments));
+   var initialModel = {_: {}
+                      ,comments: _L.fromArray([])
+                      ,downs: 0
+                      ,ups: 0};
+   var model = A3($Signal.foldp,
+   update,
+   initialModel,
+   actions);
+   var main = A2($Signal.map,
+   view(inbox.address),
+   model);
+   var Model = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,comments: c
+             ,downs: b
+             ,ups: a};
+   });
+   _elm.Thumbs.values = {_op: _op
+                        ,Model: Model
+                        ,initialModel: initialModel
+                        ,NoOp: NoOp
+                        ,Up: Up
+                        ,Down: Down
+                        ,AddComment: AddComment
+                        ,update: update
+                        ,view: view
+                        ,commentList: commentList
+                        ,inbox: inbox
+                        ,actions: actions
+                        ,model: model
+                        ,main: main};
+   return _elm.Thumbs.values;
+};
